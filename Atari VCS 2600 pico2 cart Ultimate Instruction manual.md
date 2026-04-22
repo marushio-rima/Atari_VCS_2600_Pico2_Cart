@@ -1,85 +1,560 @@
-UNOCART-2600
-Instruction Manual
-Revision 1.4 21/3/2018
-Atari 2600 SD multi-cart
-1
-Quick Start
-The UnoCart -2600 is an Atari cartridge emulator. It supports cartridges with up to 64k of ROM and 32k of RAM.
-First, copy BIN, ROM or A26 files to an SD card and insert it into the cartridge. Check the TV configuration jumper on
-the back of the board matches your TV system. Insert the cartridge in the Atari 2600. If the board is uncased, check
-you’ve got it the right way round (see picture). Power on the Atari and use the joystick to choose an item and the
-fire button to start it.
-PAL/NTSC Configuration
-The jumper on the back of the board allows you to select whether the cartridge uses NTSC or PAL/PAL60 for the
-built-in menu. You can remove the jumper completely if you are using a NTSC TV.
-Note that this jumper only applies to the cartridge menu (and also to the Supercharger BIOS if you are using a
-Supercharger cartridge type). Once you select a ROM to emulate, the TV picture produced will be entirely
-dependent on the cartridge being emulated. In general there were separate PAL and NTSC versions of each
-cartridge – make sure you get the correct version.
-SD Cards
-SD cards should be formatted as FAT32. Newer SD cards may come formatted as exFAT. These can be used with the
-UnoCart-2600, but need to be re-formatted as FAT32 on your computer prior to use. Note that the UnoCart-2600
-firmware will only show up to 80 items per directory. You can use directories to organise your files.
-2
-Menu
-The menu allows you to navigate the files on the card and select a title to use. Joystick up and down will move
-through the items one at a time. You can also use joystick left and right to move to the previous or next page. Press
-fire to select an item. You can also use the SELECT button on the console to move to the next item, and RESET to
-select an item, if you don’t have a joystick plugged in.
-Compatibility
-The UnoCart-2600 should be able to emulate every cartridge released during the commercial life of the 2600.
-Newer homebrew titles should also be compatible with the UnoCart-2600, unless they use the DPC+ co-processor
-features specific to the Harmony/Melody cartridge. Note that the DPC support on the cartridge is not complete but
-it is sufficient to play Pitfall II.
-Arcadia/Starpath Supercharger titles are emulated with the multi-load parts combined in a single file. Up to 256
-loads are supported (2MB file). The Supercharger BIOS will use the TV type set by the UnoCart-2600 TV jumper.
-ROM Files
-The UnoCart uses cartridge detection signatures from the Stella Atari 2600 emulator to auto-detect all common
-cartridge types. If a file has an extension of .BIN, .ROM or .A26 it will be auto-detected. If you want to force the
-cartridge to be emulated as a specific type, you can use the file extensions listed in the table below.
-Cartridge Type ROM RAM File Extension
-2K 2K .2K
-4K 4K .4K
-F8 8K .F8
-F8 SC 8K 128 bytes .F8S
-F6 16K .F6
-F6 SC 16K 128 bytes .F6S
-F4 32K .F4
-F4 SC 32K 128 bytes .F4S
-FE (Activision) 8K .FE
-3F (Tigervision) <=64K .3F
-3E <=64K <=32K .3E
-E0 (Parker Bros) 8K .E0
-0840 8K .084
-CV (CommaVid) 2K 1K .CV
-EF 64K .EF
-EF SC 64K 128 bytes .EFS
-F0 64K .F0
-FA (CBS RAM Plus) 12K 256 bytes .FA
-E7 (M-Network) 16K 2K .E7
-DPC (Pitfall II) 8K+2K .DPC
-Supercharger 256 loads .AR
-3
-Firmware re-programming (advanced)
-The board can be re-programmed using an ST-Link device. The programming header is at the top of the board. First
-connect the 3 pins to the equivalent pins on your ST-Link. You should then connect the ST-Link device to the USB
-port of your computer. You will also need to power the board – the easiest way to do this is to plug the board into
-your Atari 2600 and power on. The ST-Link software should then be able to connect to the STM32F407 and reprogram
-the firmware.
-The latest firmware is available on the project website: https://github.com/robinhedwards/UnoCart-2600
-Pin SWD Function
-1 SWDIO SWD I/O
-2 GND GND
-3 SWCLK SWD Clock
-Microcontroller (advanced)
-The UnoCart-2600 will be fitted with either a STM32F407VGT6 (1meg flash) or a STM32F407VET6 (512k flash)
-microcontroller. Please refer to your PCB to determine which one is present on your device. If you are developing
-new firmware for the cartridge, the table below shows the pins connected to the cartridge port & micro SD card slot.
-STM32 Pin(s) Cartridge Port STM32 Pin(s) Function
-PD0...12 A0…A12 PB5 MicroSD CS
-PE8…15 D0…D7 PB13 (SPI2,2) MicroSD CLK
-PC0 TV Jumper PB14 (SPI2,2) MicroSD DO
-PC1 TV Jumper PB15 (SPI2,2) MicroSD DI
-Credits
-Original idea, hardware and firmware by Robin Edwards (electrotrains at atariage).
-Additional cartridge support and firmware additions by Christian Speckner (DirtyHairy at atariage
+# Atari VCS 2600 Pico2 Cart — Ultimate Edition
+## User Manual / Manual do Usuário
+### Revision 1.0 — 2026-04-22
+
+---
+
+# 🇺🇸 ENGLISH
+
+---
+
+## Quick Start
+
+The **Atari VCS 2600 Pico2 Cart — Ultimate Edition** is an Atari 2600
+cartridge emulator based on the **WeAct Pico2 B (RP2350B)** microcontroller.
+
+It supports cartridges with up to 64K of ROM and 32K of RAM, plus an
+exclusive custom mapper with extended capabilities.
+
+**Steps to get started:**
+1. Format a MicroSD card as **FAT or FAT32**
+2. Copy `.BIN`, `.ROM` or `.A26` ROM files to the SD card
+3. Insert the MicroSD card into the cartridge slot (left edge of PCB)
+4. Insert the cartridge into your Atari 2600
+5. Power on the Atari 2600
+6. Use the **joystick** or **SELECT/RESET** keys to navigate the menu
+7. Press **FIRE** or **RESET** to launch a title
+
+---
+
+## PAL / NTSC / PAL-M Configuration
+
+The cartridge supports three TV standards:
+
+| Standard | Region | Notes |
+|----------|--------|-------|
+| NTSC | USA, Brazil (older sets) | Default |
+| PAL | Europe, most of the world | |
+| PAL-M | Brazil | Brazilian standard |
+
+> **Note:** The TV standard setting only affects the built-in menu and the
+> Supercharger BIOS. Once a ROM is selected, the video output is entirely
+> determined by the ROM being emulated. Always use the correct regional
+> version of each ROM.
+
+Configuration is done via firmware — no physical jumper required on this
+version (unlike the original UnoCart-2600).
+
+---
+
+## SD Card
+
+- Format: **FAT or FAT32** (recommended)
+- exFAT cards must be reformatted before use
+- Supported file extensions: `.BIN`, `.ROM`, `.A26`, and type-specific
+  extensions (see Compatibility table)
+- Maximum items per directory: **up to SD card capacity**
+- Subdirectories supported for file organization
+
+---
+
+## Menu Navigation
+
+| Control | Action |
+|---------|--------|
+| Joystick UP / DOWN | Move one item at a time |
+| Joystick LEFT / RIGHT | Previous / next page |
+| FIRE button | Select item |
+| SELECT (console) | Move to next item |
+| RESET (console) | Select item |
+
+---
+
+## Stereo Audio Output
+
+The Ultimate Edition features an **independent stereo audio output** via a
+**3.5mm stereo jack (P2)** on the right edge of the PCB.
+
+- Completely independent from the Atari 2600 internal audio path
+- Stereo PWM audio generated by the RP2350B Core 1 (~26.6% Core 1 usage)
+- Supports NTSC, PAL-M and PAL audio timing
+- Connect to any stereo amplifier, headphones, or audio system
+- **No modification to the Atari 2600 console is required**
+
+---
+
+## RGB LED Status Indicator
+
+The **WS2812B RGB LED** (center of PCB, near edge connector) provides
+visual feedback:
+
+| Color | Status |
+|-------|--------|
+| Blue (breathing) | Menu active, navigating |
+| Green | ROM loaded and running |
+| Yellow | SD card access / loading |
+| Red | Error (SD card not found or read error) |
+| White flash | Boot / reset |
+
+> LED behavior is firmware-defined and may be updated in future releases.
+
+---
+
+## Compatibility
+
+The Ultimate Edition emulates all major Atari 2600 banking schemes:
+
+| Cartridge Type | ROM Size | RAM Size | File Extension |
+|----------------|----------|----------|----------------|
+| 2K | 2K | — | `.2K` |
+| 4K | 4K | — | `.4K` |
+| F8 | 8K | — | `.F8` |
+| F8 SC | 8K | 128 bytes | `.F8S` |
+| F6 | 16K | — | `.F6` |
+| F6 SC | 16K | 128 bytes | `.F6S` |
+| F4 | 32K | — | `.F4` |
+| F4 SC | 32K | 128 bytes | `.F4S` |
+| FE (Activision) | 8K | — | `.FE` |
+| 3F (Tigervision) | ≤64K | — | `.3F` |
+| 3E | ≤64K | ≤32K | `.3E` |
+| E0 (Parker Bros) | 8K | — | `.E0` |
+| 0840 | 8K | — | `.084` |
+| CV (CommaVid) | 2K | 1K | `.CV` |
+| EF | 64K | — | `.EF` |
+| EF SC | 64K | 128 bytes | `.EFS` |
+| F0 | 64K | — | `.F0` |
+| FA (CBS RAM Plus) | 12K | 256 bytes | `.FA` |
+| E7 (M-Network) | 16K | 2K | `.E7` |
+| DPC (Pitfall II) | 8K+2K | — | `.DPC` |
+| Supercharger | 256 loads | — | `.AR` |
+| **ULTIMATE** | **custom** | **custom** | **`.ULT`** |
+
+> **Note:** Internet-dependent mappers are excluded by design.
+> DPC+ (Harmony/Melody specific) is not supported.
+
+### Supercharger
+Arcadia/Starpath Supercharger titles are emulated with multi-load parts
+combined in a single file. Up to 256 loads supported (2MB file).
+
+### Auto-Detection
+ROM type is auto-detected using cartridge signatures from the
+**Stella Atari 2600 emulator**. Files with `.BIN`, `.ROM` or `.A26`
+extensions will be auto-detected. Use specific extensions to force a type.
+
+---
+
+## Hardware Overview
+
+### PCB Specifications
+
+| Parameter | Value |
+|-----------|-------|
+| Dimensions | 74 × 52 × 1.6mm |
+| Finish | Green solder mask + ENIG |
+| Hardware version | v1.0 A |
+| Edge connector | 24-pin × 2.54mm, chamfered 45°×1mm |
+| Components | 44 + 3 test points |
+| Estimated cost | ~$14–18 USD (assembled) |
+
+### Physical Compatibility
+
+| Shell Type | Compatible | Notes |
+|------------|-----------|-------|
+| Original Atari 2600 shell | ✅ | Standard fit |
+| Patola (Brazilian shell) | ✅ | H1/H2 holes for pins |
+| Other standard shells | ✅ | Universal 74×52mm |
+
+### Connectors and Interfaces
+
+| Interface | Location | Notes |
+|-----------|----------|-------|
+| MicroSD slot | Left edge | Dual footprint SMD+THT |
+| Stereo audio jack P2 | Right edge | 3.5mm stereo |
+| Atari edge connector | Bottom | 24-pin, chamfered |
+| Debug UART (TP1) | PCB test point | GP17, 3.3V logic |
+| USB (WeAct module) | Top center | Firmware update |
+
+### GPIO Mapping (RP2350B)
+
+| GPIO | Function |
+|------|----------|
+| GP0–GP12 | A0–A12 (Address bus) |
+| GP13 | SD_CLK |
+| GP14 | SD_MOSI |
+| GP15 | SD_MISO |
+| GP16 | SD_CS |
+| GP17 | UART_TX debug (TP1) |
+| GP18 | WS2812B (PIO0 SM0) |
+| GP19 | PIO_CLK (PIO0 SM1) |
+| GP20 | PWM_L (PWM2A) — Left audio |
+| GP21 | PWM_R (PWM2B) — Right audio |
+| GP22–GP27 | SPARE |
+| GP28–GP35 | D0–D7 (Data bus) |
+| GP36–GP39 | SPARE |
+| GP40–GP47 | ADC (unused) |
+
+---
+
+## Firmware Update
+
+Firmware can be updated via the **USB port** on the WeAct Pico2 B module
+(top center of PCB):
+
+1. Hold the **BOOTSEL** button on the WeAct module
+2. Connect USB cable to your computer
+3. The device will appear as a USB mass storage drive
+4. Copy the `.UF2` firmware file to the drive
+5. The device will reboot automatically with the new firmware
+
+> No ST-Link or special programmer required (unlike the original UnoCart-2600).
+
+Latest firmware: [github.com/marushio-rima/Atari_VCS_2600_Pico2_Cart](https://github.com/marushio-rima/Atari_VCS_2600_Pico2_Cart)
+
+---
+
+## Debug / Developer Interface
+
+| Interface | Details |
+|-----------|---------|
+| UART TX (TP1) | GP17, 115200 baud, 3.3V logic, 8N1 |
+| USB Serial | Available via WeAct USB port |
+| SWD | Via WeAct module debug pads |
+
+---
+
+## Routing and Signal Integrity
+
+| Signal Type | Trace Width |
+|-------------|-------------|
+| +5V / GND | 0.5mm |
+| 3.3V | 0.3mm |
+| Signals | 0.2mm |
+| Component spacing | ≥1mm |
+| GND plane | Bottom layer (pour) |
+| Ground topology | Star ground |
+
+---
+
+## Silkscreen Reference
+
+- **Board name:** Atari VCS 2600 Pico2 Cart Ultimate
+- **Version:** v1.0 A
+- GPIO labels on all pins
+- Capacitor polarity marked
+- IC orientation marked
+- Edge connector pin labels
+- GitHub URL printed on board
+
+---
+
+## Troubleshooting
+
+| Symptom | Possible Cause | Solution |
+|---------|---------------|----------|
+| No video on power-on | Wrong orientation | Check edge connector direction |
+| Menu not appearing | SD card not detected | Check SD format (FAT/FAT32) |
+| No audio from jack | Volume/connection | Check stereo cable and amplifier |
+| ROM not loading | Wrong file type | Try renaming with specific extension |
+| LED stays red | SD card error | Reformat SD card as FAT32 |
+| Garbled video | Wrong TV standard | Check firmware TV setting |
+
+---
+
+## Credits
+
+- **Hardware & PCB design:** marushio-rima
+- **Original UnoCart-2600:** Robin Edwards (electrotrains @ AtariAge)
+- **UnoCart firmware extensions:** Christian Speckner (DirtyHairy @ AtariAge)
+- **Community support:** AtariAge forums
+
+---
+
+## License
+
+- Hardware (PCB, KiCad files): **CC-BY-SA 4.0**
+- Firmware (new code): **MIT**
+- UnoCart-derived code: **GPL v3**
+
+---
+---
+
+# 🇧🇷 PORTUGUÊS
+
+---
+
+## Início Rápido
+
+O **Atari VCS 2600 Pico2 Cart — Ultimate Edition** é um emulador de
+cartuchos para o Atari 2600, baseado no microcontrolador
+**WeAct Pico2 B (RP2350B)**.
+
+Suporta cartuchos com até 64K de ROM e 32K de RAM, além de um mapper
+customizado exclusivo com capacidades estendidas.
+
+**Passos para começar:**
+1. Formate um cartão MicroSD como **FAT ou FAT32**
+2. Copie arquivos ROM `.BIN`, `.ROM` ou `.A26` para o cartão SD
+3. Insira o MicroSD no slot do cartucho (borda esquerda do PCB)
+4. Insira o cartucho no seu Atari 2600
+5. Ligue o Atari 2600
+6. Use o **joystick** ou as teclas **SELECT/RESET** para navegar no menu
+7. Pressione **FIRE** ou **RESET** para iniciar um título
+
+---
+
+## Configuração PAL / NTSC / PAL-M
+
+O cartucho suporta três padrões de TV:
+
+| Padrão | Região | Observações |
+|--------|--------|-------------|
+| NTSC | EUA, Brasil (TVs antigas) | Padrão |
+| PAL | Europa, maior parte do mundo | |
+| PAL-M | Brasil | Padrão brasileiro |
+
+> **Nota:** A configuração de padrão de TV afeta apenas o menu interno e o
+> BIOS do Supercharger. Após selecionar uma ROM, a saída de vídeo é
+> determinada pela ROM emulada. Use sempre a versão regional correta de
+> cada ROM.
+
+A configuração é feita via firmware — sem jumper físico nesta versão
+(diferente do UnoCart-2600 original).
+
+---
+
+## Cartão SD
+
+- Formato: **FAT ou FAT32** (recomendado)
+- Cartões exFAT devem ser reformatados antes do uso
+- Extensões suportadas: `.BIN`, `.ROM`, `.A26` e extensões específicas
+  por tipo (veja tabela de compatibilidade)
+- Subdiretórios suportados para organização de arquivos
+
+---
+
+## Navegação no Menu
+
+| Controle | Ação |
+|----------|------|
+| Joystick CIMA / BAIXO | Mover um item por vez |
+| Joystick ESQUERDA / DIREITA | Página anterior / próxima |
+| Botão FIRE | Selecionar item |
+| SELECT (console) | Mover para próximo item |
+| RESET (console) | Selecionar item |
+
+---
+
+## Saída de Áudio Estéreo
+
+O Ultimate Edition possui **saída de áudio estéreo independente** via
+**jack P2 3,5mm estéreo** na borda direita do PCB.
+
+- Completamente independente do caminho de áudio interno do Atari 2600
+- Áudio PWM estéreo gerado pelo Core 1 do RP2350B (~26,6% de uso do Core 1)
+- Suporta temporização de áudio NTSC, PAL-M e PAL
+- Conecte a qualquer amplificador estéreo, fones de ouvido ou sistema de som
+- **Nenhuma modificação no console Atari 2600 é necessária**
+
+---
+
+## Indicador LED RGB
+
+O **LED RGB WS2812B** (centro do PCB, próximo ao conector de borda) fornece
+feedback visual:
+
+| Cor | Status |
+|-----|--------|
+| Azul (pulsando) | Menu ativo, navegando |
+| Verde | ROM carregada e rodando |
+| Amarelo | Acesso ao cartão SD / carregando |
+| Vermelho | Erro (SD não encontrado ou erro de leitura) |
+| Flash branco | Boot / reset |
+
+> O comportamento do LED é definido pelo firmware e pode ser atualizado
+> em versões futuras.
+
+---
+
+## Compatibilidade
+
+O Ultimate Edition emula todos os principais esquemas de banking do Atari 2600:
+
+| Tipo de Cartucho | ROM | RAM | Extensão |
+|------------------|-----|-----|----------|
+| 2K | 2K | — | `.2K` |
+| 4K | 4K | — | `.4K` |
+| F8 | 8K | — | `.F8` |
+| F8 SC | 8K | 128 bytes | `.F8S` |
+| F6 | 16K | — | `.F6` |
+| F6 SC | 16K | 128 bytes | `.F6S` |
+| F4 | 32K | — | `.F4` |
+| F4 SC | 32K | 128 bytes | `.F4S` |
+| FE (Activision) | 8K | — | `.FE` |
+| 3F (Tigervision) | ≤64K | — | `.3F` |
+| 3E | ≤64K | ≤32K | `.3E` |
+| E0 (Parker Bros) | 8K | — | `.E0` |
+| 0840 | 8K | — | `.084` |
+| CV (CommaVid) | 2K | 1K | `.CV` |
+| EF | 64K | — | `.EF` |
+| EF SC | 64K | 128 bytes | `.EFS` |
+| F0 | 64K | — | `.F0` |
+| FA (CBS RAM Plus) | 12K | 256 bytes | `.FA` |
+| E7 (M-Network) | 16K | 2K | `.E7` |
+| DPC (Pitfall II) | 8K+2K | — | `.DPC` |
+| Supercharger | 256 cargas | — | `.AR` |
+| **ULTIMATE** | **customizado** | **customizado** | **`.ULT`** |
+
+> **Nota:** Mappers dependentes de internet são excluídos por design.
+> DPC+ (específico do Harmony/Melody) não é suportado.
+
+### Supercharger
+Títulos Arcadia/Starpath Supercharger são emulados com as partes
+multi-load combinadas em um único arquivo. Até 256 cargas suportadas
+(arquivo de 2MB).
+
+### Detecção Automática
+O tipo de ROM é detectado automaticamente usando assinaturas de cartuchos
+do emulador **Stella Atari 2600**. Arquivos com extensões `.BIN`, `.ROM`
+ou `.A26` serão detectados automaticamente. Use extensões específicas para
+forçar um tipo.
+
+---
+
+## Visão Geral do Hardware
+
+### Especificações do PCB
+
+| Parâmetro | Valor |
+|-----------|-------|
+| Dimensões | 74 × 52 × 1,6mm |
+| Acabamento | Máscara verde + ENIG |
+| Versão de hardware | v1.0 A |
+| Conector de borda | 24 pinos × 2,54mm, chanfro 45°×1mm |
+| Componentes | 44 + 3 pontos de teste |
+| Custo estimado | ~$14–18 USD (montado) |
+
+### Compatibilidade Física
+
+| Tipo de Shell | Compatível | Observações |
+|---------------|-----------|-------------|
+| Shell Atari 2600 original | ✅ | Encaixe padrão |
+| Patola (shell brasileiro) | ✅ | Furos H1/H2 para pinos |
+| Outros shells padrão | ✅ | Universal 74×52mm |
+
+### Conectores e Interfaces
+
+| Interface | Localização | Observações |
+|-----------|-------------|-------------|
+| Slot MicroSD | Borda esquerda | Footprint duplo SMD+THT |
+| Jack de áudio P2 estéreo | Borda direita | 3,5mm estéreo |
+| Conector de borda Atari | Borda inferior | 24 pinos, chanfrado |
+| UART debug (TP1) | Ponto de teste no PCB | GP17, lógica 3,3V |
+| USB (módulo WeAct) | Centro superior | Atualização de firmware |
+
+### Mapeamento GPIO (RP2350B)
+
+| GPIO | Função |
+|------|--------|
+| GP0–GP12 | A0–A12 (Barramento de endereços) |
+| GP13 | SD_CLK |
+| GP14 | SD_MOSI |
+| GP15 | SD_MISO |
+| GP16 | SD_CS |
+| GP17 | UART_TX debug (TP1) |
+| GP18 | WS2812B (PIO0 SM0) |
+| GP19 | PIO_CLK (PIO0 SM1) |
+| GP20 | PWM_L (PWM2A) — Áudio esquerdo |
+| GP21 | PWM_R (PWM2B) — Áudio direito |
+| GP22–GP27 | SPARE |
+| GP28–GP35 | D0–D7 (Barramento de dados) |
+| GP36–GP39 | SPARE |
+| GP40–GP47 | ADC (não utilizado) |
+
+---
+
+## Atualização de Firmware
+
+O firmware pode ser atualizado via **porta USB** no módulo WeAct Pico2 B
+(centro superior do PCB):
+
+1. Segure o botão **BOOTSEL** no módulo WeAct
+2. Conecte o cabo USB ao computador
+3. O dispositivo aparecerá como um drive USB de armazenamento em massa
+4. Copie o arquivo de firmware `.UF2` para o drive
+5. O dispositivo reiniciará automaticamente com o novo firmware
+
+> Nenhum ST-Link ou programador especial necessário (diferente do
+> UnoCart-2600 original).
+
+Firmware mais recente: [github.com/marushio-rima/Atari_VCS_2600_Pico2_Cart](https://github.com/marushio-rima/Atari_VCS_2600_Pico2_Cart)
+
+---
+
+## Interface de Debug / Desenvolvedor
+
+| Interface | Detalhes |
+|-----------|---------|
+| UART TX (TP1) | GP17, 115200 baud, lógica 3,3V, 8N1 |
+| USB Serial | Disponível via porta USB do WeAct |
+| SWD | Via pads de debug do módulo WeAct |
+
+---
+
+## Roteamento e Integridade de Sinal
+
+| Tipo de Sinal | Largura da Trilha |
+|---------------|-------------------|
+| +5V / GND | 0,5mm |
+| 3,3V | 0,3mm |
+| Sinais | 0,2mm |
+| Espaçamento entre componentes | ≥1mm |
+| Plano GND | Camada inferior (flood fill) |
+| Topologia de terra | Star ground |
+
+---
+
+## Referência da Silkscreen
+
+- **Nome da placa:** Atari VCS 2600 Pico2 Cart Ultimate
+- **Versão:** v1.0 A
+- Labels GPIO em todos os pinos
+- Polaridade dos capacitores marcada
+- Orientação dos CIs marcada
+- Labels dos pinos do conector de borda
+- URL do GitHub impressa na placa
+
+---
+
+## Solução de Problemas
+
+| Sintoma | Possível Causa | Solução |
+|---------|---------------|---------|
+| Sem vídeo ao ligar | Orientação errada | Verifique a direção do conector de borda |
+| Menu não aparece | SD não detectado | Verifique formato do SD (FAT/FAT32) |
+| Sem áudio no jack | Volume/conexão | Verifique cabo estéreo e amplificador |
+| ROM não carrega | Tipo de arquivo errado | Tente renomear com extensão específica |
+| LED fica vermelho | Erro no SD | Reformate o SD como FAT32 |
+| Vídeo distorcido | Padrão de TV errado | Verifique configuração de TV no firmware |
+
+---
+
+## Créditos
+
+- **Hardware & design de PCB:** marushio-rima
+- **UnoCart-2600 original:** Robin Edwards (electrotrains @ AtariAge)
+- **Extensões do firmware UnoCart:** Christian Speckner (DirtyHairy @ AtariAge)
+- **Suporte da comunidade:** Fóruns AtariAge
+
+---
+
+## Licença
+
+- Hardware (PCB, arquivos KiCad): **CC-BY-SA 4.0**
+- Firmware (código novo): **MIT**
+- Código derivado do UnoCart: **GPL v3**
+
+---
+
+*Atari VCS 2600 Pico2 Cart — Ultimate Edition*
+*github.com/marushio-rima/Atari_VCS_2600_Pico2_Cart*
+*AtariAge community project*
